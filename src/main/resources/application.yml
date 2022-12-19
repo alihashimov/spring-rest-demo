@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/springdatadb
+    username: root
+    password: Ali246810@
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+server:
+  port: 8088
+  servlet:
+    context-path: /api
