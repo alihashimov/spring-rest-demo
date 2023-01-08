@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -14,16 +15,20 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/employees")
-@Tag(name = "Employee Services",description = "employee services")
+@Tag(name = "Employee Services", description = "employee services")
 public class EmployeeController {
     private final EmployeeService employeeService;
 
-    @GetMapping
-    public EmployeeResponse getAllEmployee() {
+
+
+    @GetMapping("/admin")
+    @PreAuthorize("hasRole('ADMIN')")
+    public EmployeeResponse getAllEmployees() {
         return employeeService.getAllEmployees();
     }
 
-    @GetMapping("/{employee-id}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @GetMapping("/user/{employee-id}")
     @Operation(summary = "This gets employee by id")
     public EmployeeDto getEmployee(@PathVariable("employee-id") int employeeId) {
         return employeeService.getEmployee(employeeId);
@@ -42,18 +47,20 @@ public class EmployeeController {
     public void insert(@RequestBody @Valid EmployeeDto employeeDto) {
         employeeService.insert(employeeDto);
     }
+
     @PutMapping("/{id}")
-    public void updateAll(@RequestBody EmployeeDto employeeDto,@PathVariable("id") int id){
-        employeeService.update(employeeDto,id);
+    public void updateAll(@RequestBody EmployeeDto employeeDto, @PathVariable("id") int id) {
+        employeeService.update(employeeDto, id);
     }
+
     @PatchMapping("/{id}")
-    public void updateSome(@RequestBody EmployeeDto employeeDto,@PathVariable("id") int id){
-        employeeService.updateSome(employeeDto,id);
+    public void updateSome(@RequestBody EmployeeDto employeeDto, @PathVariable("id") int id) {
+        employeeService.updateSome(employeeDto, id);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable("id") int id){
+    public void delete(@PathVariable("id") int id) {
         employeeService.delete(id);
 
     }
